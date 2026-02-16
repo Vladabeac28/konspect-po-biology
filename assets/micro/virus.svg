@@ -1,0 +1,17 @@
+<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 800'>
+  <rect width='1200' height='800' fill='#f3dede'/>
+  <g transform='translate(600 400)'>
+    <circle r='180' fill='#a03a3a'/>
+    <circle r='145' fill='#cf6464'/>
+    <g stroke='#7c2222' stroke-width='10'>
+      <line x1='0' y1='-245' x2='0' y2='-180'/><circle cx='0' cy='-258' r='16' fill='#b64949'/>
+      <line x1='170' y1='-170' x2='125' y2='-125'/><circle cx='182' cy='-182' r='16' fill='#b64949'/>
+      <line x1='245' y1='0' x2='180' y2='0'/><circle cx='258' cy='0' r='16' fill='#b64949'/>
+      <line x1='170' y1='170' x2='125' y2='125'/><circle cx='182' cy='182' r='16' fill='#b64949'/>
+      <line x1='0' y1='245' x2='0' y2='180'/><circle cx='0' cy='258' r='16' fill='#b64949'/>
+      <line x1='-170' y1='170' x2='-125' y2='125'/><circle cx='-182' cy='182' r='16' fill='#b64949'/>
+      <line x1='-245' y1='0' x2='-180' y2='0'/><circle cx='-258' cy='0' r='16' fill='#b64949'/>
+      <line x1='-170' y1='-170' x2='-125' y2='-125'/><circle cx='-182' cy='-182' r='16' fill='#b64949'/>
+    </g>
+  </g>
+</svg>
