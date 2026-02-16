@@ -1564,12 +1564,17 @@
       const t = currentTopic(); if(!t) return;
       const q = t.quiz[state.quiz.idx];
       const body = document.getElementById("quizBody");
-      const resultBox = document.getElementById("resultBox");
 
       if(state.quiz.selected===null){
         showResult("Оберіть варіант відповіді перед підтвердженням.", "warn");
         return;
       }
+
+      finalizeAnswer(state.quiz.selected, q, body, t);
+    }
+
+    function finalizeAnswer(selectedIndex, q, body, t){
+      if(!body) return;
 
       // Lock options and show correct/wrong
       const opts = body.querySelectorAll(".opt");
@@ -1577,12 +1582,12 @@
         const i = Number(o.dataset.i);
         o.classList.remove("selected");
         o.classList.toggle("correct", i===q.c);
-        o.classList.toggle("wrong", i===state.quiz.selected && i!==q.c);
+        o.classList.toggle("wrong", i===selectedIndex && i!==q.c);
         o.style.pointerEvents = "none";
         o.setAttribute("tabindex","-1");
       });
 
-      const isCorrect = (state.quiz.selected === q.c);
+      const isCorrect = (selectedIndex === q.c);
       if(isCorrect) state.quiz.correctCount++;
 
       showResult(
@@ -1602,8 +1607,10 @@
     }
 
     function skipAnswer(){
-      showResult("Питання пропущено. Правильна відповідь буде показана після підтвердження наступного питання.", "warn");
-      nextQuestion();
+      const t = currentTopic(); if(!t) return;
+      const q = t.quiz[state.quiz.idx];
+      const body = document.getElementById("quizBody");
+      finalizeAnswer(-1, q, body, t);
     }
 
     function nextQuestion(){
