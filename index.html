@@ -50,24 +50,33 @@
       padding:18px;
       max-width: 1300px;
       margin:0 auto;
-    }
-
-    @media (max-width: 980px){
-      .app{ grid-template-columns: 1fr; }
-      .sidebar{ position:relative; top:auto; }
+      align-items:start;
     }
 
     .sidebar{
-      position:sticky;
-      top:18px;
-      height: calc(100vh - 36px);
+      position:relative;
+      top:auto;
+      max-height:none;
       border-radius: var(--radius2);
-      overflow:hidden;
+      overflow:visible;
       background: linear-gradient(180deg, rgba(11,107,58,.10), rgba(11,107,58,.03) 40%, rgba(255,255,255,.9));
       border:1px solid var(--line);
       box-shadow: var(--shadow);
       display:flex;
       flex-direction:column;
+    }
+
+    @media (min-width: 981px){
+      .sidebar{
+        position:sticky;
+        top:18px;
+        max-height: calc(100vh - 36px);
+        overflow:hidden;
+      }
+    }
+
+    @media (max-width: 980px){
+      .app{ grid-template-columns: 1fr; }
     }
 
     .brand{
@@ -188,6 +197,8 @@
       margin:12px 8px 14px;
       padding:0 6px 14px;
       overflow:auto;
+      flex:1;
+      min-height:0;
     }
     .nav::-webkit-scrollbar{ width:10px; }
     .nav::-webkit-scrollbar-thumb{ background: rgba(11,107,58,.18); border-radius: 999px; }
@@ -1080,26 +1091,26 @@
           {
             title: "Мітохондрії (TEM) — «електростанції» клітини",
             caption: "Тонкий зріз тканини: видно структуру мітохондрії. (Transmission Electron Microscopy)",
-            url: "https://upload.wikimedia.org/wikipedia/commons/0/0a/Mitochondria_-_TEM.jpg",
-            sourceName: "Wikimedia Commons",
-            sourceUrl: "https://commons.wikimedia.org/wiki/File:Mitochondria_-_TEM.jpg",
-            license: "Public domain"
+            url: "assets/micro/mitochondria.svg",
+            sourceName: "BioSpark local image",
+            sourceUrl: "",
+            license: "Локально вбудоване зображення"
           },
           {
             title: "Ядро (мікрофото) — «кімната для ДНК»",
             caption: "Мікрофото ядра клітини (публікація NIGMS/NIH).",
-            url: "https://upload.wikimedia.org/wikipedia/commons/1/1f/Micrograph_of_a_cell_nucleus.png",
-            sourceName: "Wikimedia Commons",
-            sourceUrl: "https://commons.wikimedia.org/wiki/File:Micrograph_of_a_cell_nucleus.png",
-            license: "Public domain (US Gov)"
+            url: "assets/micro/nucleus.svg",
+            sourceName: "BioSpark local image",
+            sourceUrl: "",
+            license: "Локально вбудоване зображення"
           },
           {
             title: "Ядро + мітохондрії (TEM, позначені N і M)",
             caption: "Електронна мікрофотографія: ядро (N) і мітохондрії (M).",
-            url: "https://upload.wikimedia.org/wikipedia/commons/0/0e/Chondrocyte-_calcium_stain_ar.png",
-            sourceName: "Wikimedia Commons",
-            sourceUrl: "https://commons.wikimedia.org/wiki/File:Chondrocyte-_calcium_stain_ar.png",
-            license: "CC BY-SA 4.0"
+            url: "assets/micro/nucleus-mito.svg",
+            sourceName: "BioSpark local image",
+            sourceUrl: "",
+            license: "Локально вбудоване зображення"
           }
         ],
         quiz: [
@@ -1212,10 +1223,10 @@
           {
             title: "E. coli (SEM) — бактерії під електронним мікроскопом",
             caption: "Сканувальна електронна мікрофотографія: видно паличкоподібні клітини бактерії.",
-            url: "https://upload.wikimedia.org/wikipedia/commons/0/06/E._coli_Bacteria_%287316101966%29.jpg",
-            sourceName: "Wikimedia Commons",
-            sourceUrl: "https://commons.wikimedia.org/wiki/File:E._coli_Bacteria_(7316101966).jpg",
-            license: "Public domain (NIAID/NIH)"
+            url: "assets/micro/ecoli.svg",
+            sourceName: "BioSpark local image",
+            sourceUrl: "",
+            license: "Локально вбудоване зображення"
           }
         ],
         quiz: [
@@ -1302,10 +1313,10 @@
           {
             title: "Віруси грипу H5N1 (TEM) — дві вірусні частинки",
             caption: "Transmission electron micrograph: видно вірусні частинки (вірони).",
-            url: "https://upload.wikimedia.org/wikipedia/commons/4/4d/H5N1_virions_108%2C000x.jpg",
-            sourceName: "Wikimedia Commons",
-            sourceUrl: "https://commons.wikimedia.org/wiki/File:H5N1_virions_108%2C000x.jpg",
-            license: "Public domain (CDC)"
+            url: "assets/micro/virus.svg",
+            sourceName: "BioSpark local image",
+            sourceUrl: "",
+            license: "Локально вбудоване зображення"
           }
         ],
         quiz: [
@@ -1403,10 +1414,10 @@
           {
             title: "Епідерма листка з продихами (світлова мікроскопія, 400×)",
             caption: "Видно продихи — “віконця” листка для газообміну.",
-            url: "https://upload.wikimedia.org/wikipedia/commons/3/33/Origanum_vulgare_leaf_epidermis_print_with_stomata_400x.jpg",
-            sourceName: "Wikimedia Commons",
-            sourceUrl: "https://commons.wikimedia.org/wiki/File:Origanum_vulgare_leaf_epidermis_print_with_stomata_400x.jpg",
-            license: "CC BY-SA 4.0"
+            url: "assets/micro/stomata.svg",
+            sourceName: "BioSpark local image",
+            sourceUrl: "",
+            license: "Локально вбудоване зображення"
           }
         ],
         quiz: [
@@ -1652,13 +1663,18 @@
     }
 
     function openImageModal(img){
+      const hasSourceLink = typeof img.sourceUrl === "string" && img.sourceUrl.trim().length > 0;
+      const sourceMeta = hasSourceLink
+        ? `Джерело: <a href="${img.sourceUrl}" target="_blank" rel="noopener">${escapeHtml(img.sourceName || "джерело")}</a>`
+        : `Джерело: ${escapeHtml(img.sourceName || "локальне зображення")}`;
+
       modalTitle.textContent = "Мікрофото: " + img.title;
       modalBody.innerHTML = `
         <img src="${img.url}" alt="${escapeHtml(img.title)}" />
         <div class="modalMeta">
           <div><b>Пояснення:</b> ${escapeHtml(img.caption || "")}</div>
           <div class="mmSmall">
-            Джерело: <a href="${img.sourceUrl}" target="_blank" rel="noopener">${escapeHtml(img.sourceName || "Wikimedia Commons")}</a>
+            ${sourceMeta}
             • Ліцензія: ${escapeHtml(img.license || "—")}
           </div>
         </div>

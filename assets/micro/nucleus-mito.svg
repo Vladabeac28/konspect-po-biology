@@ -1,0 +1,12 @@
+<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 1200 800'>
+  <rect width='1200' height='800' fill='#d8ddd4'/>
+  <circle cx='430' cy='410' r='210' fill='#8ca485'/>
+  <circle cx='430' cy='410' r='145' fill='#b8c9b4'/>
+  <ellipse cx='820' cy='330' rx='220' ry='130' fill='#be7254'/>
+  <ellipse cx='820' cy='520' rx='190' ry='120' fill='#be7254'/>
+  <path d='M670 330c60-35 140-28 220 12' stroke='#803f2b' stroke-width='15' fill='none' stroke-linecap='round'/>
+  <path d='M680 520c60-40 120-42 190 2' stroke='#803f2b' stroke-width='15' fill='none' stroke-linecap='round'/>
+  <text x='378' y='410' fill='#22371f' font-size='74' font-family='Arial' font-weight='700'>N</text>
+  <text x='798' y='350' fill='#3f1f15' font-size='64' font-family='Arial' font-weight='700'>M</text>
+  <text x='796' y='540' fill='#3f1f15' font-size='64' font-family='Arial' font-weight='700'>M</text>
+</svg>
