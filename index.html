@@ -1,0 +1,1870 @@
+<!doctype html>
+<html lang="uk">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>BioSpark — конспекти й тести</title>
+  <style>
+    :root{
+      --bg1:#0b1020;
+      --bg2:#120a2a;
+      --card: rgba(255,255,255,.08);
+      --card2: rgba(255,255,255,.12);
+      --stroke: rgba(255,255,255,.18);
+      --text: rgba(255,255,255,.92);
+      --muted: rgba(255,255,255,.72);
+      --shadow: 0 22px 60px rgba(0,0,0,.45);
+      --r: 18px;
+      --a:#00e5ff;
+      --b:#ff3dff;
+      --c:#ffd000;
+      --d:#7cff6b;
+      --danger:#ff4d6d;
+      --ok:#39ffb6;
+    }
+
+    /* ====== Base ====== */
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, "Helvetica Neue", Arial, "Noto Sans", "Liberation Sans", sans-serif;
+      color:var(--text);
+      background:
+        radial-gradient(1200px 700px at 15% 10%, rgba(0,229,255,.25), transparent 60%),
+        radial-gradient(900px 600px at 85% 15%, rgba(255,61,255,.22), transparent 55%),
+        radial-gradient(1000px 800px at 65% 90%, rgba(124,255,107,.14), transparent 60%),
+        linear-gradient(180deg, var(--bg1), var(--bg2));
+      overflow-x:hidden;
+    }
+    a{color:inherit}
+    button{font:inherit}
+    .wrap{max-width:1180px; margin:0 auto; padding:22px 18px 70px;}
+    .row{display:flex; gap:14px; align-items:center; flex-wrap:wrap;}
+    .muted{color:var(--muted)}
+    .pill{
+      display:inline-flex; align-items:center; gap:8px;
+      border:1px solid var(--stroke);
+      background:linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.05));
+      padding:8px 12px; border-radius:999px;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 10px 35px rgba(0,0,0,.28);
+    }
+    .pill .dot{
+      width:10px; height:10px; border-radius:50%;
+      background:conic-gradient(from 90deg, var(--a), var(--b), var(--c), var(--d), var(--a));
+      box-shadow: 0 0 18px rgba(0,229,255,.45);
+    }
+    .btn{
+      border:1px solid var(--stroke);
+      background:linear-gradient(180deg, rgba(255,255,255,.14), rgba(255,255,255,.07));
+      color:var(--text);
+      padding:10px 14px; border-radius:14px;
+      cursor:pointer;
+      transition: transform .12s ease, background .2s ease, box-shadow .2s ease, border-color .2s ease;
+      box-shadow: 0 14px 45px rgba(0,0,0,.25);
+      user-select:none;
+    }
+    .btn:hover{
+      transform: translateY(-1px) scale(1.01);
+      background:linear-gradient(180deg, rgba(255,255,255,.18), rgba(255,255,255,.08));
+      border-color: rgba(255,255,255,.28);
+      box-shadow: 0 18px 55px rgba(0,0,0,.34);
+    }
+    .btn:active{transform: translateY(0px) scale(.99)}
+    .btn.primary{
+      border:none;
+      background:linear-gradient(90deg, rgba(0,229,255,.9), rgba(255,61,255,.85));
+      color:#09101f;
+      font-weight:700;
+      text-shadow: 0 1px 0 rgba(255,255,255,.35);
+    }
+    .btn.danger{
+      border:none;
+      background:linear-gradient(90deg, rgba(255,77,109,.95), rgba(255,208,0,.80));
+      color:#1b0c12;
+      font-weight:800;
+    }
+    .chip{
+      display:inline-flex; align-items:center; gap:8px;
+      border:1px solid var(--stroke);
+      padding:8px 10px; border-radius:999px;
+      background:rgba(255,255,255,.06);
+      cursor:pointer;
+      transition: transform .12s ease, background .2s ease, border-color .2s ease;
+    }
+    .chip:hover{transform: translateY(-1px); background:rgba(255,255,255,.10); border-color: rgba(255,255,255,.28)}
+    .chip.active{
+      background:linear-gradient(90deg, rgba(0,229,255,.22), rgba(255,61,255,.18));
+      border-color: rgba(0,229,255,.45);
+      box-shadow: 0 0 0 3px rgba(0,229,255,.12);
+    }
+
+    /* ====== Fancy background details ====== */
+    .noise{
+      pointer-events:none;
+      position:fixed; inset:0;
+      background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='240' height='240' filter='url(%23n)' opacity='.22'/%3E%3C/svg%3E");
+      mix-blend-mode: overlay;
+      opacity:.25;
+    }
+    .glow{
+      position:fixed; inset:-80px;
+      background:conic-gradient(from 180deg, rgba(0,229,255,.10), rgba(255,61,255,.10), rgba(255,208,0,.08), rgba(124,255,107,.09), rgba(0,229,255,.10));
+      filter: blur(80px);
+      opacity:.65;
+      animation: spin 22s linear infinite;
+      pointer-events:none;
+    }
+    @keyframes spin{to{transform:rotate(360deg)}}
+
+    /* ====== Header ====== */
+    header{
+      position:sticky; top:0; z-index:50;
+      background:linear-gradient(180deg, rgba(11,16,32,.88), rgba(11,16,32,.55));
+      backdrop-filter: blur(14px);
+      border-bottom:1px solid rgba(255,255,255,.10);
+    }
+    .header-inner{max-width:1180px; margin:0 auto; padding:14px 18px;}
+    .brand{
+      display:flex; align-items:center; gap:12px; min-width: 220px;
+    }
+    .logo{
+      width:40px; height:40px; border-radius:14px;
+      background: radial-gradient(circle at 30% 30%, rgba(255,255,255,.55), rgba(255,255,255,0) 35%),
+                  conic-gradient(from 90deg, var(--a), var(--b), var(--c), var(--d), var(--a));
+      box-shadow: 0 12px 30px rgba(0,229,255,.25);
+      position:relative;
+      overflow:hidden;
+    }
+    .logo:after{
+      content:"";
+      position:absolute; inset:-40%;
+      background:linear-gradient(90deg, rgba(255,255,255,.0), rgba(255,255,255,.35), rgba(255,255,255,.0));
+      transform: rotate(25deg);
+      animation: shine 4.8s ease-in-out infinite;
+    }
+    @keyframes shine{
+      0%,35%{transform:translateX(-55%) rotate(25deg); opacity:.0}
+      45%{opacity:.85}
+      55%,100%{transform:translateX(55%) rotate(25deg); opacity:0}
+    }
+    h1{
+      margin:0;
+      font-size:18px;
+      letter-spacing:.2px;
+    }
+    .sub{font-size:12px; margin-top:2px; color:var(--muted)}
+    .spacer{flex:1}
+    .kbd{
+      font-size:12px;
+      padding:6px 9px;
+      border-radius:10px;
+      border:1px solid var(--stroke);
+      background:rgba(255,255,255,.06);
+      color:rgba(255,255,255,.82);
+    }
+
+    /* ====== Layout ====== */
+    .grid{
+      display:grid;
+      grid-template-columns: 340px 1fr;
+      gap:16px;
+      margin-top:18px;
+    }
+    @media (max-width: 980px){
+      .grid{grid-template-columns:1fr}
+      .brand{min-width:auto}
+    }
+
+    .card{
+      border:1px solid rgba(255,255,255,.14);
+      background:linear-gradient(180deg, rgba(255,255,255,.10), rgba(255,255,255,.05));
+      border-radius: var(--r);
+      box-shadow: var(--shadow);
+      overflow:hidden;
+      position:relative;
+    }
+    .card:before{
+      content:"";
+      position:absolute; inset:0;
+      background: radial-gradient(600px 200px at 12% 0%, rgba(0,229,255,.20), transparent 60%),
+                  radial-gradient(600px 200px at 88% 0%, rgba(255,61,255,.18), transparent 60%);
+      opacity:.55;
+      pointer-events:none;
+    }
+    .card > *{position:relative}
+    .card-h{
+      padding:14px 14px 10px;
+      border-bottom:1px solid rgba(255,255,255,.10);
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+    }
+    .card-b{padding:14px}
+    .title{
+      font-size:15px; margin:0; font-weight:800;
+      letter-spacing:.15px;
+    }
+
+    /* ====== Topics list ====== */
+    .topic{
+      display:flex; gap:12px;
+      padding:12px 12px;
+      border-radius:16px;
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(255,255,255,.04);
+      cursor:pointer;
+      transition: transform .12s ease, border-color .2s ease, background .2s ease;
+      margin-bottom:10px;
+    }
+    .topic:hover{transform: translateY(-1px); border-color: rgba(255,255,255,.25); background:rgba(255,255,255,.08)}
+    .topic.active{
+      border-color: rgba(0,229,255,.55);
+      background:linear-gradient(90deg, rgba(0,229,255,.16), rgba(255,61,255,.12));
+      box-shadow: 0 0 0 3px rgba(0,229,255,.10);
+    }
+    .t-ico{
+      width:44px; height:44px; border-radius:16px;
+      background:conic-gradient(from 180deg, rgba(0,229,255,.85), rgba(255,61,255,.85), rgba(255,208,0,.85), rgba(124,255,107,.85), rgba(0,229,255,.85));
+      filter:saturate(1.2);
+      box-shadow: 0 14px 30px rgba(0,0,0,.25);
+      display:grid; place-items:center;
+      position:relative;
+      overflow:hidden;
+    }
+    .t-ico svg{filter:drop-shadow(0 8px 12px rgba(0,0,0,.25))}
+    .t-meta{min-width:0}
+    .t-name{font-weight:900; font-size:14px; margin:0; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+    .t-desc{margin:4px 0 0; font-size:12px; color:var(--muted); line-height:1.35}
+
+    /* ====== Content ====== */
+    .hero{
+      display:flex; gap:14px; align-items:stretch; flex-wrap:wrap;
+    }
+    .hero-left{flex: 1 1 420px}
+    .hero-right{flex: 1 1 260px}
+    .badge{
+      display:inline-flex; align-items:center; gap:8px;
+      padding:7px 10px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.12);
+      background:rgba(0,0,0,.18);
+      font-size:12px;
+      color:rgba(255,255,255,.86);
+    }
+    .badge .spark{
+      width:10px; height:10px; border-radius:50%;
+      background: radial-gradient(circle at 30% 30%, rgba(255,255,255,.65), rgba(255,255,255,0) 45%),
+                  conic-gradient(from 60deg, var(--a), var(--b), var(--c), var(--d), var(--a));
+      box-shadow: 0 0 18px rgba(255,61,255,.35);
+    }
+    .big{
+      font-size:22px; margin:10px 0 8px; font-weight:950; letter-spacing:.2px;
+    }
+    .lead{margin:0; color:var(--muted); line-height:1.55}
+    .divider{height:1px; background:rgba(255,255,255,.10); margin:14px 0}
+    .callouts{
+      display:grid; grid-template-columns: repeat(3, 1fr); gap:10px;
+    }
+    @media (max-width: 980px){ .callouts{grid-template-columns:1fr} }
+    .callout{
+      border:1px solid rgba(255,255,255,.12);
+      border-radius:16px;
+      background:rgba(255,255,255,.05);
+      padding:12px;
+      transition: transform .12s ease, border-color .2s ease, background .2s ease;
+    }
+    .callout:hover{
+      transform: translateY(-1px);
+      background:rgba(255,255,255,.08);
+      border-color: rgba(255,255,255,.22);
+    }
+    .callout h4{margin:0; font-size:13px; font-weight:900}
+    .callout p{margin:6px 0 0; font-size:12px; color:var(--muted); line-height:1.45}
+
+    /* ====== Accordion ====== */
+    .acc{
+      border:1px solid rgba(255,255,255,.12);
+      border-radius:16px;
+      overflow:hidden;
+      background:rgba(255,255,255,.04);
+      margin-top:12px;
+    }
+    .acc-item + .acc-item{border-top:1px solid rgba(255,255,255,.10)}
+    .acc-btn{
+      width:100%;
+      text-align:left;
+      padding:12px 14px;
+      border:none;
+      background:transparent;
+      color:var(--text);
+      cursor:pointer;
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+    }
+    .acc-btn:hover{background:rgba(255,255,255,.06)}
+    .acc-btn strong{font-size:13px}
+    .acc-btn span{color:var(--muted); font-size:12px}
+    .acc-panel{
+      max-height:0;
+      overflow:hidden;
+      transition:max-height .25s ease;
+      background:rgba(0,0,0,.16);
+    }
+    .acc-panel .inside{padding:12px 14px 14px}
+    .inside p{margin:0 0 10px; line-height:1.55; color:rgba(255,255,255,.86); font-size:13px}
+    .inside ul{margin:10px 0 0 18px; color:rgba(255,255,255,.86); font-size:13px; line-height:1.55}
+    .tag{
+      display:inline-block;
+      padding:2px 8px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.14);
+      background:rgba(255,255,255,.06);
+      color:rgba(255,255,255,.86);
+      font-size:12px;
+      margin-right:6px;
+    }
+
+    /* ====== Slides / flipping ====== */
+    .slider{
+      border:1px solid rgba(255,255,255,.12);
+      border-radius:18px;
+      background:rgba(255,255,255,.04);
+      overflow:hidden;
+      margin-top:12px;
+    }
+    .slider-top{
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+      padding:12px 12px;
+      border-bottom:1px solid rgba(255,255,255,.10);
+    }
+    .slide{
+      display:none;
+      padding:12px 14px 16px;
+    }
+    .slide.active{display:block}
+    .slide h3{margin:0 0 8px; font-size:14px; font-weight:950}
+    .slide p{margin:0; color:rgba(255,255,255,.86); line-height:1.55; font-size:13px}
+    .navbtns{display:flex; gap:10px}
+    .mini{
+      padding:9px 11px; border-radius:12px;
+      font-size:13px;
+    }
+
+    /* ====== Quiz ====== */
+    .quiz{
+      margin-top:14px;
+      border:1px solid rgba(255,255,255,.12);
+      border-radius:18px;
+      background:rgba(255,255,255,.04);
+      overflow:hidden;
+    }
+    .quiz-h{
+      padding:12px 12px;
+      border-bottom:1px solid rgba(255,255,255,.10);
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+    }
+    .qmeta{font-size:12px; color:var(--muted)}
+    .progress{
+      width:220px; height:10px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.14);
+      background:rgba(0,0,0,.20);
+      overflow:hidden;
+    }
+    .bar{
+      height:100%;
+      width:0%;
+      background:linear-gradient(90deg, var(--a), var(--b), var(--c));
+      box-shadow:0 0 18px rgba(0,229,255,.35);
+      transition: width .2s ease;
+    }
+    .quiz-b{padding:12px 14px 14px}
+    .qtext{margin:0 0 10px; font-weight:900; letter-spacing:.1px}
+    .opts{display:grid; grid-template-columns: 1fr; gap:10px}
+    .opt{
+      border:1px solid rgba(255,255,255,.12);
+      background:rgba(255,255,255,.05);
+      border-radius:16px;
+      padding:11px 12px;
+      cursor:pointer;
+      transition: transform .12s ease, background .2s ease, border-color .2s ease;
+    }
+    .opt:hover{transform: translateY(-1px); background:rgba(255,255,255,.08); border-color: rgba(255,255,255,.22)}
+    .opt.selected{border-color: rgba(0,229,255,.65); box-shadow: 0 0 0 3px rgba(0,229,255,.10)}
+    .opt.correct{border-color: rgba(57,255,182,.75); background:rgba(57,255,182,.12)}
+    .opt.wrong{border-color: rgba(255,77,109,.75); background:rgba(255,77,109,.12)}
+    .quiz-actions{display:flex; gap:10px; flex-wrap:wrap; margin-top:12px; align-items:center}
+    .result{
+      margin-top:10px;
+      padding:10px 12px;
+      border-radius:16px;
+      border:1px solid rgba(255,255,255,.12);
+      background:rgba(0,0,0,.18);
+      color:rgba(255,255,255,.88);
+      line-height:1.5;
+      display:none;
+    }
+    .result.show{display:block}
+
+    /* ====== Profile ====== */
+    .profile{
+      display:grid;
+      grid-template-columns: 1fr;
+      gap:10px;
+    }
+    .stat{
+      border:1px solid rgba(255,255,255,.12);
+      border-radius:16px;
+      background:rgba(255,255,255,.04);
+      padding:12px;
+      transition: transform .12s ease, background .2s ease, border-color .2s ease;
+    }
+    .stat:hover{
+      transform: translateY(-1px);
+      background:rgba(255,255,255,.07);
+      border-color: rgba(255,255,255,.22);
+    }
+    .stat b{font-size:12px; color:rgba(255,255,255,.80)}
+    .stat .v{font-size:18px; font-weight:950; margin-top:6px}
+    .table{
+      width:100%;
+      border-collapse:separate;
+      border-spacing:0 10px;
+      font-size:12px;
+      color:rgba(255,255,255,.84);
+    }
+    .table td{
+      background:rgba(255,255,255,.04);
+      border:1px solid rgba(255,255,255,.10);
+      padding:10px 10px;
+    }
+    .table td:first-child{border-radius:14px 0 0 14px}
+    .table td:last-child{border-radius:0 14px 14px 0}
+    .right{text-align:right}
+    .small{font-size:12px}
+    .hint{font-size:12px; color:rgba(255,255,255,.76); margin:8px 0 0; line-height:1.5}
+
+    /* ====== Modal ====== */
+    .modal{
+      position:fixed; inset:0; z-index:999;
+      display:none;
+      align-items:center; justify-content:center;
+      padding:18px;
+      background:rgba(0,0,0,.60);
+      backdrop-filter: blur(10px);
+    }
+    .modal.show{display:flex}
+    .modal .box{
+      width:min(520px, 100%);
+      border-radius:20px;
+      border:1px solid rgba(255,255,255,.18);
+      background:linear-gradient(180deg, rgba(255,255,255,.12), rgba(255,255,255,.06));
+      box-shadow: var(--shadow);
+      overflow:hidden;
+    }
+    .modal .box .top{
+      padding:12px 14px;
+      border-bottom:1px solid rgba(255,255,255,.10);
+      display:flex; align-items:center; justify-content:space-between; gap:10px;
+    }
+    .modal .box .body{padding:14px}
+    .field{
+      display:grid; gap:8px;
+      margin-top:10px;
+    }
+    input[type="text"]{
+      width:100%;
+      padding:12px 12px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.16);
+      background:rgba(0,0,0,.22);
+      color:rgba(255,255,255,.92);
+      outline:none;
+    }
+    input[type="text"]:focus{
+      border-color: rgba(0,229,255,.60);
+      box-shadow: 0 0 0 3px rgba(0,229,255,.10);
+    }
+
+    /* ====== Footer ====== */
+    footer{
+      margin-top:18px;
+      color:rgba(255,255,255,.70);
+      font-size:12px;
+      text-align:center;
+    }
+    .kbdline{display:flex; gap:8px; flex-wrap:wrap; justify-content:center; margin-top:8px}
+  </style>
+</head>
+<body>
+  <div class="glow"></div>
+  <div class="noise"></div>
+
+  <header>
+    <div class="header-inner row">
+      <div class="brand">
+        <div class="logo" aria-hidden="true"></div>
+        <div>
+          <h1>BioSpark</h1>
+          <div class="sub">Конспекти + тести • результати в профілі (LocalStorage)</div>
+        </div>
+      </div>
+
+      <div class="spacer"></div>
+
+      <div class="row">
+        <span class="pill" title="Статус профілю">
+          <span class="dot" aria-hidden="true"></span>
+          <span id="helloText">Профіль: не налаштовано</span>
+        </span>
+        <button class="btn" id="openProfileBtn" type="button">Профіль</button>
+        <button class="btn primary" id="startQuizBtn" type="button">Пройти тест</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <div class="grid">
+
+      <!-- Left: Topics -->
+      <section class="card" aria-label="Теми">
+        <div class="card-h">
+          <p class="title">Теми</p>
+          <span class="kbd" title="Порада">Клікни тему → конспект</span>
+        </div>
+        <div class="card-b">
+          <div class="row" style="margin-bottom:10px">
+            <span class="chip active" id="filterAll">Усі</span>
+            <span class="chip" id="filterCell">Клітина</span>
+            <span class="chip" id="filterMicro">Мікро</span>
+            <span class="chip" id="filterBot">Ботаніка</span>
+          </div>
+          <div id="topicsList" aria-label="Список тем"></div>
+          <p class="hint">
+            Підказка: результати тестів зберігаються локально на цьому пристрої (у браузері).
+          </p>
+        </div>
+      </section>
+
+      <!-- Right: Content -->
+      <section class="card" aria-label="Конспект і тест">
+        <div class="card-h">
+          <div>
+            <p class="title" id="topicTitle">Обери тему зліва</p>
+            <div class="sub" id="topicSubtitle">Після конспекту натисни «Пройти тест».</div>
+          </div>
+          <span class="pill" id="topicTagPill" style="display:none">
+            <span class="dot" aria-hidden="true"></span>
+            <span id="topicTagText">Тег</span>
+          </span>
+        </div>
+
+        <div class="card-b" id="contentArea">
+          <!-- Hero + notes + slider + quiz inserted by JS -->
+        </div>
+      </section>
+    </div>
+
+    <footer>
+      <div>© BioSpark • Односторінковий навчальний прототип (index.html)</div>
+      <div class="kbdline">
+        <span class="kbd">Підказки: клавіші</span>
+        <span class="kbd">← / →</span>
+        <span class="kbd">перелистування</span>
+        <span class="kbd">Enter</span>
+        <span class="kbd">наступне питання</span>
+      </div>
+    </footer>
+  </main>
+
+  <!-- Profile modal -->
+  <div class="modal" id="profileModal" role="dialog" aria-modal="true" aria-labelledby="profileTitle">
+    <div class="box">
+      <div class="top">
+        <strong id="profileTitle">Профіль і результати</strong>
+        <button class="btn" id="closeProfileBtn" type="button">Закрити</button>
+      </div>
+      <div class="body">
+        <div class="field">
+          <label class="small muted" for="nameInput">Ім’я (для відображення на сайті)</label>
+          <input id="nameInput" type="text" maxlength="32" placeholder="Напр.: Леді Влада" />
+          <div class="row">
+            <button class="btn primary" id="saveNameBtn" type="button">Зберегти</button>
+            <button class="btn danger" id="resetBtn" type="button" title="Видаляє ім’я та результати з цього браузера">Скинути дані</button>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="profile" id="profileStats"></div>
+
+        <div class="divider"></div>
+
+        <div class="small muted" style="margin-bottom:8px">Останні спроби (до 10):</div>
+        <table class="table" id="historyTable" aria-label="Історія спроб">
+          <tbody></tbody>
+        </table>
+
+        <p class="hint">
+          Примітка: це не серверний акаунт. Дані зберігаються у LocalStorage і можуть зникнути після очищення даних браузера.
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    "use strict";
+
+    /* ==========================
+       Data: topics, notes, images, quizzes
+       ========================== */
+
+    // Inline SVG images (no external files needed)
+    function svgDataUri(svg){
+      const s = svg.replace(/\n/g,"").replace(/\s{2,}/g," ").trim();
+      return "data:image/svg+xml;charset=utf-8," + encodeURIComponent(s);
+    }
+
+    const ICONS = {
+      cell: `
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M12 2c4.8 0 9 4.2 9 10s-4.2 10-9 10S3 17.8 3 12 7.2 2 12 2Z" stroke="rgba(0,0,0,.75)" stroke-width="1.5"/>
+          <path d="M9.3 8.8c.7-1.2 2.1-1.9 3.7-1.6 1.8.3 3 2 2.7 3.8-.3 1.8-2 3-3.8 2.7" stroke="rgba(0,0,0,.75)" stroke-width="1.5" stroke-linecap="round"/>
+          <path d="M8 14.5c1.6 1.8 4.6 2.4 7 1.2" stroke="rgba(0,0,0,.75)" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      `,
+      micro: `
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M8 8c2-2 6-2 8 0s2 6 0 8-6 2-8 0-2-6 0-8Z" stroke="rgba(0,0,0,.75)" stroke-width="1.5"/>
+          <path d="M12 4v2M12 18v2M4 12h2M18 12h2" stroke="rgba(0,0,0,.75)" stroke-width="1.5" stroke-linecap="round"/>
+          <path d="M7 7l-1.2-1.2M18.2 18.2 17 17M17 7l1.2-1.2M5.8 18.2 7 17" stroke="rgba(0,0,0,.75)" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      `,
+      bot: `
+        <svg width="26" height="26" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+          <path d="M12 21c0-6 0-10 0-16" stroke="rgba(0,0,0,.75)" stroke-width="1.5" stroke-linecap="round"/>
+          <path d="M12 11c-2.8 0-5-2.2-5-5 3.2 0 5 2.2 5 5Z" stroke="rgba(0,0,0,.75)" stroke-width="1.5" />
+          <path d="M12 14c2.8 0 5-2.2 5-5-3.2 0-5 2.2-5 5Z" stroke="rgba(0,0,0,.75)" stroke-width="1.5" />
+          <path d="M9 20h6" stroke="rgba(0,0,0,.75)" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>
+      `
+    };
+
+    const IMAGES = {
+      eukCell: svgDataUri(`
+        <svg xmlns="http://www.w3.org/2000/svg" width="900" height="520" viewBox="0 0 900 520">
+          <defs>
+            <linearGradient id="g1" x1="0" x2="1" y1="0" y2="1">
+              <stop offset="0" stop-color="#00e5ff" stop-opacity=".95"/>
+              <stop offset=".55" stop-color="#ff3dff" stop-opacity=".85"/>
+              <stop offset="1" stop-color="#ffd000" stop-opacity=".75"/>
+            </linearGradient>
+            <filter id="s" x="-20%" y="-20%" width="140%" height="140%">
+              <feDropShadow dx="0" dy="18" stdDeviation="18" flood-color="#000" flood-opacity=".35"/>
+            </filter>
+          </defs>
+          <rect width="900" height="520" fill="#070a16"/>
+          <g filter="url(#s)">
+            <ellipse cx="450" cy="260" rx="320" ry="200" fill="url(#g1)" opacity=".22"/>
+            <ellipse cx="450" cy="260" rx="290" ry="175" fill="none" stroke="url(#g1)" stroke-width="8" opacity=".9"/>
+            <circle cx="470" cy="255" r="78" fill="url(#g1)" opacity=".25"/>
+            <circle cx="470" cy="255" r="60" fill="none" stroke="#ffffff" stroke-opacity=".65" stroke-width="6"/>
+            <circle cx="360" cy="210" r="28" fill="#7cff6b" opacity=".22" stroke="#ffffff" stroke-opacity=".55" stroke-width="4"/>
+            <circle cx="590" cy="325" r="24" fill="#00e5ff" opacity=".18" stroke="#ffffff" stroke-opacity=".55" stroke-width="4"/>
+            <ellipse cx="580" cy="190" rx="48" ry="26" fill="#ffd000" opacity=".18" stroke="#ffffff" stroke-opacity=".5" stroke-width="4"/>
+            <ellipse cx="330" cy="325" rx="52" ry="30" fill="#ff3dff" opacity=".16" stroke="#ffffff" stroke-opacity=".5" stroke-width="4"/>
+          </g>
+          <text x="40" y="60" fill="#ffffff" fill-opacity=".85" font-family="Arial, sans-serif" font-size="26">Схема: еукаріотична клітина (умовно)</text>
+          <text x="40" y="92" fill="#ffffff" fill-opacity=".65" font-family="Arial, sans-serif" font-size="16">Органели позначені символічно — для навчального конспекту</text>
+        </svg>
+      `),
+      bacteria: svgDataUri(`
+        <svg xmlns="http://www.w3.org/2000/svg" width="900" height="520" viewBox="0 0 900 520">
+          <defs>
+            <linearGradient id="g2" x1="0" x2="1">
+              <stop offset="0" stop-color="#7cff6b" stop-opacity=".9"/>
+              <stop offset=".55" stop-color="#00e5ff" stop-opacity=".85"/>
+              <stop offset="1" stop-color="#ff3dff" stop-opacity=".75"/>
+            </linearGradient>
+            <filter id="s2" x="-20%" y="-20%" width="140%" height="140%">
+              <feDropShadow dx="0" dy="18" stdDeviation="18" flood-color="#000" flood-opacity=".35"/>
+            </filter>
+          </defs>
+          <rect width="900" height="520" fill="#070a16"/>
+          <g filter="url(#s2)">
+            <rect x="170" y="160" width="560" height="200" rx="100" fill="url(#g2)" opacity=".18"/>
+            <rect x="190" y="175" width="520" height="170" rx="85" fill="none" stroke="url(#g2)" stroke-width="8" opacity=".95"/>
+            <path d="M255 260c55-55 125-55 180 0s125 55 180 0" fill="none" stroke="#ffffff" stroke-opacity=".55" stroke-width="6"/>
+            <circle cx="325" cy="235" r="14" fill="#ffd000" opacity=".25" stroke="#fff" stroke-opacity=".5" stroke-width="4"/>
+            <circle cx="410" cy="300" r="12" fill="#ff3dff" opacity=".18" stroke="#fff" stroke-opacity=".5" stroke-width="4"/>
+            <circle cx="520" cy="230" r="10" fill="#00e5ff" opacity=".18" stroke="#fff" stroke-opacity=".5" stroke-width="4"/>
+            <path d="M725 260c55 0 85 25 110 60" fill="none" stroke="#ffffff" stroke-opacity=".55" stroke-width="6" stroke-linecap="round"/>
+            <path d="M725 260c55 0 85-25 110-60" fill="none" stroke="#ffffff" stroke-opacity=".55" stroke-width="6" stroke-linecap="round"/>
+          </g>
+          <text x="40" y="60" fill="#ffffff" fill-opacity=".85" font-family="Arial, sans-serif" font-size="26">Схема: бактеріальна клітина (умовно)</text>
+          <text x="40" y="92" fill="#ffffff" fill-opacity=".65" font-family="Arial, sans-serif" font-size="16">Капсула/стінка/мембрана/нуклеоїд — символічно</text>
+        </svg>
+      `),
+      virus: svgDataUri(`
+        <svg xmlns="http://www.w3.org/2000/svg" width="900" height="520" viewBox="0 0 900 520">
+          <defs>
+            <linearGradient id="g3" x1="0" x2="1" y1="0" y2="1">
+              <stop offset="0" stop-color="#ff3dff" stop-opacity=".9"/>
+              <stop offset=".55" stop-color="#00e5ff" stop-opacity=".85"/>
+              <stop offset="1" stop-color="#ffd000" stop-opacity=".75"/>
+            </linearGradient>
+            <filter id="s3" x="-20%" y="-20%" width="140%" height="140%">
+              <feDropShadow dx="0" dy="18" stdDeviation="18" flood-color="#000" flood-opacity=".35"/>
+            </filter>
+          </defs>
+          <rect width="900" height="520" fill="#070a16"/>
+          <g filter="url(#s3)">
+            <circle cx="450" cy="260" r="120" fill="url(#g3)" opacity=".20"/>
+            <circle cx="450" cy="260" r="110" fill="none" stroke="url(#g3)" stroke-width="8" opacity=".95"/>
+            <circle cx="450" cy="260" r="62" fill="none" stroke="#fff" stroke-opacity=".55" stroke-width="6"/>
+            <path d="M390 260c35-40 85-40 120 0" fill="none" stroke="#fff" stroke-opacity=".55" stroke-width="6" stroke-linecap="round"/>
+            <g stroke="#fff" stroke-opacity=".55" stroke-width="6" stroke-linecap="round">
+              <path d="M450 130v-55"/><path d="M450 390v55"/>
+              <path d="M320 260h-55"/><path d="M580 260h55"/>
+              <path d="M360 170l-40-40"/><path d="M540 350l40 40"/>
+              <path d="M540 170l40-40"/><path d="M360 350l-40 40"/>
+            </g>
+            <g fill="#ffd000" fill-opacity=".28" stroke="#fff" stroke-opacity=".45" stroke-width="4">
+              <circle cx="450" cy="70" r="12"/><circle cx="450" cy="450" r="12"/>
+              <circle cx="260" cy="260" r="12"/><circle cx="640" cy="260" r="12"/>
+              <circle cx="310" cy="120" r="12"/><circle cx="590" cy="400" r="12"/>
+              <circle cx="590" cy="120" r="12"/><circle cx="310" cy="400" r="12"/>
+            </g>
+          </g>
+          <text x="40" y="60" fill="#ffffff" fill-opacity=".85" font-family="Arial, sans-serif" font-size="26">Схема: вірусна частинка (умовно)</text>
+          <text x="40" y="92" fill="#ffffff" fill-opacity=".65" font-family="Arial, sans-serif" font-size="16">Капсид + нуклеїнова кислота + (інколи) оболонка зі «шипами»</text>
+        </svg>
+      `),
+      plantIntro: svgDataUri(`
+        <svg xmlns="http://www.w3.org/2000/svg" width="900" height="520" viewBox="0 0 900 520">
+          <defs>
+            <linearGradient id="g4" x1="0" x2="1">
+              <stop offset="0" stop-color="#7cff6b" stop-opacity=".85"/>
+              <stop offset=".6" stop-color="#00e5ff" stop-opacity=".75"/>
+              <stop offset="1" stop-color="#ffd000" stop-opacity=".7"/>
+            </linearGradient>
+            <filter id="s4" x="-20%" y="-20%" width="140%" height="140%">
+              <feDropShadow dx="0" dy="18" stdDeviation="18" flood-color="#000" flood-opacity=".35"/>
+            </filter>
+          </defs>
+          <rect width="900" height="520" fill="#070a16"/>
+          <g filter="url(#s4)">
+            <path d="M450 440c0-150 0-210 0-320" stroke="url(#g4)" stroke-width="10" stroke-linecap="round"/>
+            <path d="M450 250c-90 0-160-70-160-160 110 0 160 70 160 160Z" fill="url(#g4)" opacity=".18" stroke="#fff" stroke-opacity=".55" stroke-width="6"/>
+            <path d="M450 320c90 0 160-70 160-160-110 0-160 70-160 160Z" fill="url(#g4)" opacity=".14" stroke="#fff" stroke-opacity=".55" stroke-width="6"/>
+            <path d="M380 440h140" stroke="#fff" stroke-opacity=".55" stroke-width="6" stroke-linecap="round"/>
+            <circle cx="450" cy="115" r="14" fill="#ff3dff" fill-opacity=".22" stroke="#fff" stroke-opacity=".45" stroke-width="4"/>
+          </g>
+          <text x="40" y="60" fill="#ffffff" fill-opacity=".85" font-family="Arial, sans-serif" font-size="26">Ботаніка: стартові поняття (умовно)</text>
+          <text x="40" y="92" fill="#ffffff" fill-opacity=".65" font-family="Arial, sans-serif" font-size="16">Тканини, органи, фотосинтез — базові «перші розділи»</text>
+        </svg>
+      `)
+    };
+
+    const TOPICS = [
+      {
+        id: "euk_cell",
+        category: "cell",
+        tag: "Клітина",
+        name: "Будова клітини ядерних організмів (еукаріоти)",
+        desc: "Мембрани, ядро, органели, енергетика та транспорт.",
+        image: IMAGES.eukCell,
+        quick: [
+          {h:"Ключова ідея", p:"Еукаріотична клітина має оформлене ядро та систему мембранних органел, які розділяють функції у просторі."},
+          {h:"Що вміти", p:"Відрізняти мембранні/немембранні органели, пояснювати роль ядра, мітохондрій, ЕПС, апарату Гольджі, лізосом."},
+          {h:"Типові пастки", p:"Плутанина рибосом з мітохондріями; «клітинна стінка» є не у всіх еукаріотів (є в рослин/грибів, немає у тварин)."}
+        ],
+        accordion: [
+          {
+            title: "Плазматична мембрана",
+            subtitle: "Бар’єр, транспорт, рецепція",
+            text: [
+              "<span class='tag'>Будова</span> Фосфоліпідний бішар + білки (канали, переносники, рецептори).",
+              "<span class='tag'>Функції</span> Вибіркова проникність, ендо-/екзоцитоз, міжклітинні контакти.",
+              "<span class='tag'>Приклад</span> Активний транспорт іонів потребує енергії (АТФ)."
+            ],
+            bullets: [
+              "Дифузія: рух за градієнтом концентрації.",
+              "Осмос: рух води через напівпроникну мембрану.",
+              "Фагоцитоз/піноцитоз: «захоплення» частинок/рідини."
+            ]
+          },
+          {
+            title: "Ядро і ДНК",
+            subtitle: "Зберігання інформації й керування",
+            text: [
+              "<span class='tag'>Ядерна оболонка</span> Дві мембрани з порами для обміну з цитоплазмою.",
+              "<span class='tag'>Хроматин</span> ДНК + білки (гістони); під час поділу конденсується у хромосоми.",
+              "<span class='tag'>Ядерце</span> Синтез рРНК та складання субодиниць рибосом."
+            ],
+            bullets: [
+              "Транскрипція (ДНК → РНК) відбувається в ядрі.",
+              "Трансляція (РНК → білок) відбувається на рибосомах."
+            ]
+          },
+          {
+            title: "ЕПС і апарат Гольджі",
+            subtitle: "Синтез і «логістика» білків/ліпідів",
+            text: [
+              "<span class='tag'>Шорстка ЕПС</span> Має рибосоми; синтез мембранних і секреторних білків.",
+              "<span class='tag'>Гладка ЕПС</span> Синтез ліпідів, детоксикація, запас Ca²⁺ (особливо в м’язах).",
+              "<span class='tag'>Гольджі</span> Модифікація, сортування, пакування в пухирці; утворення лізосом."
+            ],
+            bullets: [
+              "Білки часто глікозилюються (приєднуються вуглеводи).",
+              "Везикулярний транспорт — «пухирці» між органелами."
+            ]
+          },
+          {
+            title: "Мітохондрії",
+            subtitle: "Клітинне дихання і АТФ",
+            text: [
+              "<span class='tag'>Будова</span> Зовнішня мембрана, внутрішня з кристами; матрикс містить ферменти.",
+              "<span class='tag'>Функція</span> Основне місце синтезу АТФ під час аеробного дихання.",
+              "<span class='tag'>Цікаво</span> Мають власну ДНК і рибосоми (ендосимбіотична гіпотеза)."
+            ],
+            bullets: [
+              "АТФ — універсальна «енергетична валюта» клітини.",
+              "Найбільше мітохондрій у клітинах з високими енергопотребами."
+            ]
+          },
+          {
+            title: "Рибосоми, цитоскелет, лізосоми",
+            subtitle: "Синтез білка, форма, перетравлення",
+            text: [
+              "<span class='tag'>Рибосоми</span> Немембранні; синтез білка. Є в усіх клітинах.",
+              "<span class='tag'>Цитоскелет</span> Мікротрубочки/мікрофіламенти; форма, рух, внутрішній транспорт.",
+              "<span class='tag'>Лізосоми</span> Ферменти для внутрішньоклітинного травлення (особливо у тварин)."
+            ],
+            bullets: [
+              "Автофагія — утилізація пошкоджених структур клітини.",
+              "Війки/джгутики (у деяких клітин) забезпечують рух."
+            ]
+          }
+        ],
+        slides: [
+          {
+            title: "Мембрани: принцип вибірковості",
+            text: "Вільно проходять малі неполярні молекули; іони й великі полярні — через канали/переносники. Це основа гомеостазу."
+          },
+          {
+            title: "Ядро: «центр керування»",
+            text: "Ядро зберігає ДНК і регулює синтез РНК/білків. Ядерні пори — контрольований «коридор» обміну."
+          },
+          {
+            title: "ЕПС → Гольджі: конвеєр",
+            text: "Шорстка ЕПС синтезує білки, Гольджі модифікує й «адресує» їх у потрібне місце (мембрана, лізосома, секрет)."
+          }
+        ],
+        quiz: [
+          {q:"Яка ознака є характерною для еукаріотів?", a:["Відсутність рибосом","Оформлене ядро з оболонкою","Наявність клітинної стінки у всіх","ДНК у вигляді плазмід"], c:1, e:"Еукаріоти мають ядро, відокремлене оболонкою."},
+          {q:"Основна функція мітохондрій:", a:["Синтез рРНК","Синтез АТФ під час клітинного дихання","Складання рибосом","Фотосинтез"], c:1, e:"Мітохондрії — ключове місце аеробного утворення АТФ."},
+          {q:"Шорстка ЕПС відрізняється тим, що:", a:["Не має мембрани","Містить рибосоми на поверхні","Містить ДНК","Є тільки в рослин"], c:1, e:"Рибосоми на шорсткій ЕПС синтезують білки."},
+          {q:"Апарат Гольджі переважно:", a:["Пакує і сортує білки у везикули","Розщеплює глюкозу","Зберігає спадкову інформацію","Забезпечує осмос"], c:0, e:"Гольджі — «пошта» клітини: модифікація, сортування, пакування."},
+          {q:"Рибосоми — це:", a:["Мембранні органели","Немембранні структури синтезу білка","Органели фотосинтезу","Запасні включення крохмалю"], c:1, e:"Рибосоми є у всіх клітинах і синтезують білок."},
+          {q:"Лізосоми найтиповіші для:", a:["Тваринних клітин","Еритроцитів (зрілих)","Вірусів","Прокаріотів"], c:0, e:"Лізосоми з ферментами характерні насамперед для тваринних клітин."},
+          {q:"Осмос — це:", a:["Рух води через напівпроникну мембрану","Рух іонів проти градієнта","Розщеплення білків","Поділ ядра"], c:0, e:"Осмос — дифузія води через мембрану."},
+          {q:"Цитоскелет відповідає за:", a:["Тільки синтез АТФ","Форму клітини та внутрішній транспорт","Зберігання ДНК","Синтез ліпідів"], c:1, e:"Цитоскелет формує «каркас» і забезпечує рух/транспорт."},
+          {q:"Ядерце пов’язане з:", a:["Синтезом субодиниць рибосом","Синтезом ліпідів","Детоксикацією","Фотосинтезом"], c:0, e:"У ядерці утворюється рРНК і збираються субодиниці рибосом."},
+          {q:"Ендоцитоз — це:", a:["Вихід речовин з клітини","Захоплення речовин клітиною з утворенням пухирця","Розпад АТФ","Подвоєння ДНК"], c:1, e:"Ендоцитоз — «вхід» речовин у клітину через везикули."}
+        ]
+      },
+
+      {
+        id: "bacteria",
+        category: "micro",
+        tag: "Мікро",
+        name: "Бактерії: будова і життєдіяльність",
+        desc: "Прокаріотична клітина: стінка, мембрана, нуклеоїд, плазміди.",
+        image: IMAGES.bacteria,
+        quick: [
+          {h:"Ключова ідея", p:"Бактерії — прокаріоти: немає оформленого ядра та мембранних органел, але є рибосоми й розвинена регуляція обміну."},
+          {h:"Що вміти", p:"Пояснювати різницю між грам(+) і грам(−) (загально), роль клітинної стінки, капсули, джгутиків; форми та розмноження."},
+          {h:"Типові пастки", p:"Плутати плазміди з вірусною ДНК; вважати, що бактерії «завжди» шкідливі (це не так)."}
+        ],
+        accordion: [
+          {
+            title: "Клітинна стінка і мембрана",
+            subtitle: "Захист, форма, обмін",
+            text: [
+              "<span class='tag'>Стінка</span> Містить пептидоглікан; надає форму і захищає від осмотичного лізису.",
+              "<span class='tag'>Мембрана</span> Транспорт речовин; на мембрані — ферменти дихання (у прокаріотів немає мітохондрій)."
+            ],
+            bullets: [
+              "Капсула (у деяких) — додатковий захист і прикріплення.",
+              "Мезосоми як термін у шкільних курсах трапляється, але сучасно — обережно: це можуть бути артефакти підготовки зразків."
+            ]
+          },
+          {
+            title: "Нуклеоїд і плазміди",
+            subtitle: "Генетика без ядра",
+            text: [
+              "<span class='tag'>Нуклеоїд</span> Ділянка цитоплазми з кільцевою ДНК (хромосомою) без ядерної оболонки.",
+              "<span class='tag'>Плазміди</span> Додаткові кільцеві ДНК, що можуть містити гени стійкості до антибіотиків."
+            ],
+            bullets: [
+              "Горизонтальний перенос генів: кон’югація, трансформація, трансдукція.",
+              "Це пояснює швидку еволюцію бактерій."
+            ]
+          },
+          {
+            title: "Рибосоми і синтез білка",
+            subtitle: "70S у прокаріотів",
+            text: [
+              "<span class='tag'>Рибосоми</span> Менші, ніж у еукаріотів; синтез білків відбувається в цитоплазмі.",
+              "<span class='tag'>Чому важливо</span> Деякі антибіотики діють саме на бактеріальні рибосоми (узагальнено)."
+            ],
+            bullets: [
+              "Транскрипція і трансляція можуть відбуватися майже одночасно (немає ядра)."
+            ]
+          },
+          {
+            title: "Форми, рух, розмноження",
+            subtitle: "Поділ навпіл + спороутворення (в окремих)",
+            text: [
+              "<span class='tag'>Форми</span> Коки, бацили, спірили тощо.",
+              "<span class='tag'>Рух</span> Джгутики; прикріплення — пілі.",
+              "<span class='tag'>Розмноження</span> Переважно бінарний поділ; у деяких — утворення ендоспор (переживання умов)."
+            ],
+            bullets: [
+              "Ендоспора ≠ «розмноження»; це форма виживання.",
+              "Колонії — результат багаторазових поділів."
+            ]
+          }
+        ],
+        slides: [
+          {title:"Прокаріот = простіша організація, не «примітивність»", text:"Бактерії мають високу адаптивність: швидкі поділи, обмін генами, метаболічну різноманітність."},
+          {title:"Дихання на мембрані", text:"Оскільки мітохондрій немає, багато енергетичних процесів «прив’язані» до плазматичної мембрани."},
+          {title:"Плазміди як «бонусні модулі»", text:"Плазміди можуть переносити корисні гени (наприклад, стійкість) і поширюватися між клітинами."}
+        ],
+        quiz: [
+          {q:"Бактерії належать до:", a:["Еукаріотів","Прокаріотів","Вірусів","Грибів"], c:1, e:"Бактерії — прокаріоти: без оформленого ядра."},
+          {q:"Де у бактерій розміщена основна ДНК?", a:["У ядрі","У нуклеоїді","У мітохондріях","У хлоропластах"], c:1, e:"Нуклеоїд — ділянка з хромосомою бактерії."},
+          {q:"Плазміди — це:", a:["Мембранні органели","Додаткові кільцеві молекули ДНК","Тип бактеріальної стінки","Вірусні капсиди"], c:1, e:"Плазміди — додаткова ДНК, часто з корисними генами."},
+          {q:"Клітинна стінка бактерій важлива, бо:", a:["Здійснює фотосинтез","Захищає від осмотичного лізису та надає форму","Зберігає спадкову інформацію","Синтезує АТФ у мітохондріях"], c:1, e:"Стінка підтримує форму й захищає клітину."},
+          {q:"Основний спосіб розмноження бактерій:", a:["Мітоз","Бінарний поділ","Мейоз","Брунькування (завжди)"], c:1, e:"Типово — поділ навпіл."},
+          {q:"Ендоспора у бактерій — це:", a:["Спосіб швидкого розмноження","Форма виживання в несприятливих умовах","Вірусна частинка","Органела"], c:1, e:"Ендоспора потрібна для переживання умов, а не для розмноження."},
+          {q:"У прокаріотів відсутні:", a:["Рибосоми","Плазматична мембрана","Оформлене ядро","Цитоплазма"], c:2, e:"Немає ядра, але є мембрана, цитоплазма і рибосоми."},
+          {q:"Джгутики бактерій переважно забезпечують:", a:["Синтез білка","Рух","Зберігання ДНК","Поділ ядра"], c:1, e:"Джгутики — органи руху."},
+          {q:"Горизонтальний перенос генів означає:", a:["Передавання генів тільки від батьків до нащадків","Обмін генетичним матеріалом між клітинами одного покоління","Перенесення генів у ядро","Синтез білка"], c:1, e:"Це обмін генами між клітинами, не лише через розмноження."},
+          {q:"Енергетичні процеси у бактерій часто пов’язані з:", a:["Мітохондріями","Хлоропластами","Плазматичною мембраною","Ядерною оболонкою"], c:2, e:"Багато ферментів дихання розташовані на мембрані."}
+        ]
+      },
+
+      {
+        id: "viruses",
+        category: "micro",
+        tag: "Мікро",
+        name: "Віруси: будова та цикл",
+        desc: "Капсид, нуклеїнова кислота, оболонка; лізогенний/літичний цикл.",
+        image: IMAGES.virus,
+        quick: [
+          {h:"Ключова ідея", p:"Віруси — неклітинні форми: не мають власного обміну речовин у повному сенсі, розмножуються лише всередині клітини-хазяїна."},
+          {h:"Що вміти", p:"Розрізняти капсид/оболонку, розуміти етапи інфікування і реплікації, відрізняти літичний та лізогенний цикл (узагальнено)."},
+          {h:"Типові пастки", p:"Називати вірус «клітиною»; плутати вірусну оболонку з клітинною мембраною (вона походить від хазяїна)."}
+        ],
+        accordion: [
+          {
+            title: "Будова вірусної частинки (віріона)",
+            subtitle: "Капсид + геном (+ інколи оболонка)",
+            text: [
+              "<span class='tag'>Капсид</span> Білкова оболонка, що захищає геном і допомагає прикріпленню.",
+              "<span class='tag'>Геном</span> ДНК або РНК (залежно від вірусу).",
+              "<span class='tag'>Оболонка</span> Ліпідна, з «шипами» (глікопротеїнами) — не у всіх вірусів."
+            ],
+            bullets: [
+              "Віруси без оболонки зазвичай стійкіші в довкіллі (узагальнення).",
+              "Оболонкові часто чутливіші до детергентів/спиртів."
+            ]
+          },
+          {
+            title: "Цикл інфікування",
+            subtitle: "Прикріплення → проникнення → синтез → складання → вихід",
+            text: [
+              "<span class='tag'>Адсорбція</span> Зв’язування з рецепторами клітини-хазяїна.",
+              "<span class='tag'>Реплікація</span> Використання ресурсів клітини для синтезу компонентів вірусу.",
+              "<span class='tag'>Вихід</span> Лізис клітини або брунькування (для оболонкових)."
+            ],
+            bullets: [
+              "Рецепторна специфічність визначає «тропізм» вірусу до тканин.",
+              "Мутації можуть змінювати ефективність прикріплення."
+            ]
+          },
+          {
+            title: "Літичний і лізогенний цикл",
+            subtitle: "Швидке руйнування або «прихована» фаза",
+            text: [
+              "<span class='tag'>Літичний</span> Швидке утворення багатьох віріонів і загибель клітини.",
+              "<span class='tag'>Лізогенний</span> Геном вірусу може вбудовуватися/зберігатися в клітині й активуватись пізніше (узагальнено)."
+            ],
+            bullets: [
+              "Для бактерійних вірусів (бактеріофагів) це класична схема.",
+              "Тригери активації: стрес, ушкодження ДНК тощо (узагальнено)."
+            ]
+          }
+        ],
+        slides: [
+          {title:"Віруси — не клітини", text:"Вони не мають власних рибосом і не синтезують білки без клітини-хазяїна."},
+          {title:"Геном: ДНК або РНК", text:"Це важлива відмінність між групами вірусів і впливає на механізми реплікації."},
+          {title:"Оболонка: «плюс» і «мінус»", text:"Допомагає входу в клітину, але робить вірус вразливішим у зовнішньому середовищі."}
+        ],
+        quiz: [
+          {q:"Віруси — це:", a:["Прокаріоти","Еукаріоти","Неклітинні форми життя","Тип бактерій"], c:2, e:"Віруси не мають клітинної будови."},
+          {q:"Капсид — це:", a:["Ліпідна мембрана клітини","Білкова оболонка вірусу","Ядро вірусу","Рибосома"], c:1, e:"Капсид — білкова оболонка."},
+          {q:"Геном вірусу може бути:", a:["Тільки ДНК","Тільки РНК","ДНК або РНК","Тільки плазміда"], c:2, e:"У різних вірусів — різний тип нуклеїнової кислоти."},
+          {q:"Вірусна оболонка (якщо є) зазвичай:", a:["Синтезується мітохондріями вірусу","Походить від мембрани клітини-хазяїна","Є у всіх вірусів","Складається з целюлози"], c:1, e:"Оболонка формується з мембран хазяїна під час виходу."},
+          {q:"Віруси розмножуються:", a:["Поділом навпіл","Мітозом","Лише всередині клітин-хазяїнів","Через утворення спор"], c:2, e:"Для реплікації потрібна клітина."},
+          {q:"Літичний цикл зазвичай призводить до:", a:["Збереження клітини без змін","Лізису (руйнування) клітини і виходу вірусів","Утворення мітохондрій","Фотосинтезу"], c:1, e:"Літичний цикл — швидке утворення віріонів і загибель клітини."},
+          {q:"Адсорбція у вірусів — це:", a:["Розщеплення глюкози","Прикріплення до рецептора клітини","Подвоєння ДНК клітини","Вихід з клітини"], c:1, e:"Адсорбція = прикріплення."},
+          {q:"У вірусів відсутні:", a:["Нуклеїнова кислота","Капсид","Рибосоми","Білки"], c:2, e:"Віруси не мають власних рибосом."},
+          {q:"Оболонкові віруси, узагальнено, часто:", a:["Більш стійкі до детергентів","Більш чутливі до детергентів/спиртів","Не мають білків","Мають клітинну стінку"], c:1, e:"Ліпідна оболонка чутлива до детергентів."},
+          {q:"Тропізм вірусу визначається переважно:", a:["Кольором капсида","Наявністю рецепторів у клітинах-хазяїна","Кількістю мітохондрій вірусу","Клітинною стінкою вірусу"], c:1, e:"Важлива відповідність вірусних білків і клітинних рецепторів."}
+        ]
+      },
+
+      {
+        id: "bot_intro",
+        category: "bot",
+        tag: "Ботаніка",
+        name: "Ботаніка: що таке рослина і як вона живе",
+        desc: "Органи, тканини, фотосинтез, транспірація, провідні системи.",
+        image: IMAGES.plantIntro,
+        quick: [
+          {h:"Ключова ідея", p:"Рослини — автотрофи: перетворюють світлову енергію на хімічну під час фотосинтезу та мають тканинну організацію."},
+          {h:"Що вміти", p:"Розрізняти органи (корінь, пагін), тканини (покривна, основна, провідна, твірна), пояснювати транспірацію й газообмін."},
+          {h:"Типові пастки", p:"Плутати ксилему і флоему; забувати про роль продихів; вважати, що «фотосинтез = дихання» (це різні процеси)."}
+        ],
+        accordion: [
+          {
+            title: "Органи рослини: корінь і пагін",
+            subtitle: "Будова + функції",
+            text: [
+              "<span class='tag'>Корінь</span> Закріплення, всмоктування води і мінералів, інколи запас поживних речовин.",
+              "<span class='tag'>Пагін</span> Стебло + листки + бруньки; фотосинтез, транспортування, ріст."
+            ],
+            bullets: [
+              "Кореневі волоски збільшують площу всмоктування.",
+              "Бруньки містять меристеми (твірну тканину)."
+            ]
+          },
+          {
+            title: "Тканини рослин",
+            subtitle: "Покривна, основна, провідна, твірна",
+            text: [
+              "<span class='tag'>Покривна</span> Епідерма/перидерма — захист, продихи для газообміну.",
+              "<span class='tag'>Твірна (меристема)</span> Ріст: верхівкова, вставна, бічна (камбій).",
+              "<span class='tag'>Провідна</span> Ксилема (вода/мінерали) і флоема (органічні речовини)."
+            ],
+            bullets: [
+              "Камбій забезпечує потовщення стебел/коренів у деревних.",
+              "Продихи регулюють випаровування (транспірацію)."
+            ]
+          },
+          {
+            title: "Фотосинтез і дихання",
+            subtitle: "Енергія та обмін газів",
+            text: [
+              "<span class='tag'>Фотосинтез</span> У хлоропластах: світло → хімічна енергія, утворення органічних речовин.",
+              "<span class='tag'>Дихання</span> В усіх клітинах: розщеплення органічних речовин із утворенням АТФ."
+            ],
+            bullets: [
+              "Вдень у листка може переважати фотосинтез, але дихання триває завжди.",
+              "CO₂ потрібен для фотосинтезу; O₂ виділяється як побічний продукт (узагальнено)."
+            ]
+          }
+        ],
+        slides: [
+          {title:"Ксилема vs флоема", text:"Ксилема переважно транспортує воду й мінерали вгору; флоема — органічні речовини (цукри) між органами."},
+          {title:"Продихи — «клапани» листка", text:"Вони керують газообміном і транспірацією, впливаючи на водний баланс."},
+          {title:"Меристеми — точки росту", text:"Саме твірні тканини забезпечують подовження і потовщення (камбій) органів."}
+        ],
+        quiz: [
+          {q:"Основні вегетативні органи рослини:", a:["Квітка і плід","Корінь і пагін","Насінина і плід","Пиляк і маточка"], c:1, e:"Вегетативні: корінь і пагін."},
+          {q:"Ксилема транспортує переважно:", a:["Цукри","Воду й мінеральні речовини","ДНК","Ферменти травлення"], c:1, e:"Ксилема — водопровідна тканина."},
+          {q:"Флоема транспортує переважно:", a:["Органічні речовини (цукри)","Тільки воду","Кисень до коренів","Пептидоглікан"], c:0, e:"Флоема переносить продукти фотосинтезу."},
+          {q:"Продихи потрібні для:", a:["Поділу клітини","Газообміну та регуляції випаровування","Формування кореневих волосків","Синтезу ДНК"], c:1, e:"Продихи керують газообміном і транспірацією."},
+          {q:"Твірна тканина (меристема) забезпечує:", a:["Ріст","Фотосинтез","Травлення","Роботу вірусів"], c:0, e:"Меристема — тканина росту."},
+          {q:"Камбій — це меристема:", a:["Верхівкова","Бічна","Покривна","Основна"], c:1, e:"Камбій — бічна меристема."},
+          {q:"Фотосинтез відбувається в:", a:["Мітохондріях","Хлоропластах","Рибосомах","Лізосомах"], c:1, e:"Хлоропласти — органели фотосинтезу."},
+          {q:"Дихання рослин:", a:["Відбувається тільки вночі","Триває постійно (і вдень, і вночі)","Відбувається лише в листках","Не потребує органічних речовин"], c:1, e:"Дихання — безперервний процес утворення АТФ."},
+          {q:"Кореневі волоски збільшують:", a:["Площу всмоктування","Кількість хлоропластів","Кількість продихів","Товщину кори"], c:0, e:"Вони збільшують площу контакту з ґрунтовим розчином."},
+          {q:"Покривна тканина рослини виконує:", a:["Транспорт імпульсів","Захист і регуляцію обміну з довкіллям","Синтез АТФ","Розмноження вірусів"], c:1, e:"Епідерма/перидерма — захист, продихи тощо."}
+        ]
+      },
+
+      {
+        id: "plant_cells",
+        category: "bot",
+        tag: "Ботаніка",
+        name: "Рослинна клітина: відмінності від тваринної",
+        desc: "Клітинна стінка, вакуоля, хлоропласти, плазмодесми.",
+        image: IMAGES.plantIntro,
+        quick: [
+          {h:"Ключова ідея", p:"Рослинні клітини мають клітинну стінку (целюлоза), великі вакуолі та хлоропласти; це пов’язано з автотрофним способом життя."},
+          {h:"Що вміти", p:"Пояснювати роль вакуолі в тургорі, функції стінки та плазмодесм; відрізняти пластиди."},
+          {h:"Типові пастки", p:"Вважати, що «вакуоля = лізосома»; плутати хлоропласти з мітохондріями (обидва енергетичні, але різні процеси)."}
+        ],
+        accordion: [
+          {
+            title: "Клітинна стінка",
+            subtitle: "Форма, захист, тургор",
+            text: [
+              "<span class='tag'>Склад</span> Переважно целюлоза (у рослин).",
+              "<span class='tag'>Функції</span> Механічна опора, захист, обмеження надмірного набухання."
+            ],
+            bullets: [
+              "Плазмодесми — канали зв’язку між клітинами."
+            ]
+          },
+          {
+            title: "Вакуоля",
+            subtitle: "Запас і водний баланс",
+            text: [
+              "<span class='tag'>Тургор</span> Внутрішній тиск, що підтримує пружність тканин.",
+              "<span class='tag'>Функції</span> Запас речовин, пігментів, участь у підтримці pH та осмотичного тиску."
+            ],
+            bullets: [
+              "У зрілих рослинних клітинах вакуоля часто займає значний об’єм."
+            ]
+          },
+          {
+            title: "Пластиди",
+            subtitle: "Хлоропласти та інші",
+            text: [
+              "<span class='tag'>Хлоропласти</span> Фотосинтез, хлорофіл.",
+              "<span class='tag'>Лейкопласти</span> Запас (крохмаль тощо).",
+              "<span class='tag'>Хромопласти</span> Забарвлення плодів/квітів (каротиноїди)."
+            ],
+            bullets: [
+              "Пластиди — характерна ознака рослин/водоростей."
+            ]
+          }
+        ],
+        slides: [
+          {title:"Стінка + тургор = «каркас» рослини", text:"Рослина тримає форму завдяки стінці та тургору; в’янення — наслідок зниження тургору."},
+          {title:"Хлоропласт ≠ мітохондрія", text:"Хлоропласт накопичує енергію у вигляді органічних речовин; мітохондрія переважно добуває АТФ з органіки."},
+          {title:"Плазмодесми = клітинна «мережа»", text:"Вони забезпечують обмін між клітинами в тканинах і узгоджують роботу органа."}
+        ],
+        quiz: [
+          {q:"Ознака, характерна для рослинної клітини:", a:["Клітинна стінка з целюлози","Відсутність мембрани","Наявність ядра у всіх організмів","Пептидогліканова стінка"], c:0, e:"У рослин — целюлозна клітинна стінка."},
+          {q:"Велика вакуоля важлива для:", a:["Синтезу ДНК","Підтримки тургору та запасу речовин","Розмноження вірусів","Утворення рибосом"], c:1, e:"Вакуоля підтримує осмотичні властивості й тургор."},
+          {q:"Хлоропласти — це:", a:["Органели фотосинтезу","Органели дихання","Немембранні структури","Частини ядра"], c:0, e:"У хлоропластах відбувається фотосинтез."},
+          {q:"Плазмодесми забезпечують:", a:["Поділ ядра","Зв’язок і обмін між рослинними клітинами","Розщеплення білків","Синтез АТФ"], c:1, e:"Це канали між сусідніми клітинами."},
+          {q:"Пептидоглікан у клітинній стінці характерний для:", a:["Рослин","Грибів","Бактерій","Вірусів"], c:2, e:"Пептидоглікан — бактеріальна стінка."},
+          {q:"Лейкопласти найчастіше пов’язані з:", a:["Запасом речовин","Забарвленням квітів","Розщепленням токсинів","Утворенням лізосом"], c:0, e:"Лейкопласти — пластиди запасу."},
+          {q:"Хромопласти переважно відповідають за:", a:["Фотосинтез","Забарвлення плодів/квітів","Дихання","Синтез рРНК"], c:1, e:"Хромопласти містять пігменти (каротиноїди тощо)." },
+          {q:"Тургор — це:", a:["Рух цитоплазми","Внутрішній тиск, що підтримує пружність клітини","Тип ДНК","Різновид плазміди"], c:1, e:"Тургор визначає «пружність» клітин і тканин."},
+          {q:"Клітинна стінка рослин:", a:["Повністю замінює мембрану","Є додатковою структурою над мембраною","Складається з ліпідів","Є тільки у тварин"], c:1, e:"Стінка розташована назовні від плазматичної мембрани."},
+          {q:"Пластиди характерні для:", a:["Тварин","Рослин і водоростей","Вірусів","Бактерій"], c:1, e:"Пластиди — ознака рослинних клітин."}
+        ]
+      }
+    ];
+
+    /* ==========================
+       Storage keys + helpers
+       ========================== */
+    const STORAGE_KEY = "biospark_profile_v1";
+    function loadProfile(){
+      try{
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if(!raw) return {name:"", results:{}, history:[]};
+        const p = JSON.parse(raw);
+        if(!p || typeof p!=="object") return {name:"", results:{}, history:[]};
+        p.results = p.results || {};
+        p.history = p.history || [];
+        return p;
+      }catch{
+        return {name:"", results:{}, history:[]};
+      }
+    }
+    function saveProfile(p){
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(p));
+    }
+    function nowStamp(){
+      const d = new Date();
+      const pad = (n)=> String(n).padStart(2,"0");
+      return `${pad(d.getDate())}.${pad(d.getMonth()+1)}.${d.getFullYear()} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+    }
+
+    /* ==========================
+       UI state
+       ========================== */
+    const state = {
+      filter: "all",
+      topicId: null,
+      slideIndex: 0,
+      quiz: {
+        active: false,
+        idx: 0,
+        selected: null,
+        correctCount: 0,
+        finished: false
+      }
+    };
+
+    const els = {
+      topicsList: document.getElementById("topicsList"),
+      topicTitle: document.getElementById("topicTitle"),
+      topicSubtitle: document.getElementById("topicSubtitle"),
+      contentArea: document.getElementById("contentArea"),
+      startQuizBtn: document.getElementById("startQuizBtn"),
+      openProfileBtn: document.getElementById("openProfileBtn"),
+      profileModal: document.getElementById("profileModal"),
+      closeProfileBtn: document.getElementById("closeProfileBtn"),
+      nameInput: document.getElementById("nameInput"),
+      saveNameBtn: document.getElementById("saveNameBtn"),
+      resetBtn: document.getElementById("resetBtn"),
+      profileStats: document.getElementById("profileStats"),
+      historyTable: document.getElementById("historyTable"),
+      helloText: document.getElementById("helloText"),
+      topicTagPill: document.getElementById("topicTagPill"),
+      topicTagText: document.getElementById("topicTagText"),
+      filterAll: document.getElementById("filterAll"),
+      filterCell: document.getElementById("filterCell"),
+      filterMicro: document.getElementById("filterMicro"),
+      filterBot: document.getElementById("filterBot")
+    };
+
+    /* ==========================
+       Render topics
+       ========================== */
+    function topicIcon(category){
+      if(category==="cell") return ICONS.cell;
+      if(category==="micro") return ICONS.micro;
+      return ICONS.bot;
+    }
+
+    function filteredTopics(){
+      if(state.filter==="all") return TOPICS;
+      return TOPICS.filter(t => t.category === state.filter);
+    }
+
+    function renderTopics(){
+      const list = filteredTopics();
+      els.topicsList.innerHTML = "";
+      list.forEach(t=>{
+        const div = document.createElement("div");
+        div.className = "topic" + (t.id===state.topicId ? " active" : "");
+        div.setAttribute("role","button");
+        div.setAttribute("tabindex","0");
+        div.innerHTML = `
+          <div class="t-ico">${topicIcon(t.category)}</div>
+          <div class="t-meta">
+            <p class="t-name">${escapeHtml(t.name)}</p>
+            <p class="t-desc">${escapeHtml(t.desc)}</p>
+          </div>
+        `;
+        div.addEventListener("click", ()=>selectTopic(t.id));
+        div.addEventListener("keydown", (e)=>{
+          if(e.key==="Enter" || e.key===" "){ e.preventDefault(); selectTopic(t.id); }
+        });
+        els.topicsList.appendChild(div);
+      });
+
+      if(!state.topicId && list.length){
+        selectTopic(list[0].id);
+      }
+    }
+
+    /* ==========================
+       Content render
+       ========================== */
+    function selectTopic(id){
+      state.topicId = id;
+      state.slideIndex = 0;
+      state.quiz = {active:false, idx:0, selected:null, correctCount:0, finished:false};
+      renderTopics();
+      renderContent();
+    }
+
+    function currentTopic(){
+      return TOPICS.find(t=>t.id===state.topicId) || null;
+    }
+
+    function renderContent(){
+      const t = currentTopic();
+      if(!t){
+        els.topicTitle.textContent = "Обери тему зліва";
+        els.topicSubtitle.textContent = "Після конспекту натисни «Пройти тест».";
+        els.contentArea.innerHTML = "";
+        els.topicTagPill.style.display = "none";
+        return;
+      }
+
+      els.topicTitle.textContent = t.name;
+      els.topicSubtitle.textContent = t.desc;
+
+      els.topicTagPill.style.display = "inline-flex";
+      els.topicTagText.textContent = t.tag;
+
+      const hero = `
+        <div class="hero">
+          <div class="hero-left">
+            <span class="badge"><span class="spark"></span> Конспект • стисло й по суті</span>
+            <div class="big">${escapeHtml(t.name)}</div>
+            <p class="lead">${escapeHtml(t.desc)}</p>
+
+            <div class="divider"></div>
+
+            <div class="callouts">
+              ${t.quick.map(x=>`
+                <div class="callout">
+                  <h4>${escapeHtml(x.h)}</h4>
+                  <p>${escapeHtml(x.p)}</p>
+                </div>
+              `).join("")}
+            </div>
+          </div>
+
+          <div class="hero-right">
+            <div class="card" style="border-radius:18px">
+              <div class="card-h">
+                <p class="title">Ілюстрація</p>
+                <span class="kbd">вбудоване SVG</span>
+              </div>
+              <div class="card-b">
+                <img src="${t.image}" alt="Навчальна ілюстрація" style="width:100%; border-radius:16px; border:1px solid rgba(255,255,255,.10);" />
+                <p class="hint">Це умовні схеми (не мікрофото), щоб файл залишався одним.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+
+      const acc = `
+        <div class="divider"></div>
+        <span class="badge"><span class="spark"></span> Клікабельний конспект (розкрий блоки)</span>
+
+        <div class="acc" id="acc">
+          ${t.accordion.map((it, i)=>`
+            <div class="acc-item">
+              <button class="acc-btn" type="button" data-acc="${i}">
+                <div>
+                  <strong>${escapeHtml(it.title)}</strong>
+                  <div><span>${escapeHtml(it.subtitle)}</span></div>
+                </div>
+                <span class="kbd">+</span>
+              </button>
+              <div class="acc-panel" id="accPanel${i}">
+                <div class="inside">
+                  ${it.text.map(p=>`<p>${p}</p>`).join("")}
+                  ${it.bullets?.length ? `<ul>${it.bullets.map(b=>`<li>${escapeHtml(b)}</li>`).join("")}</ul>` : ""}
+                </div>
+              </div>
+            </div>
+          `).join("")}
+        </div>
+      `;
+
+      const slider = `
+        <div class="divider"></div>
+        <span class="badge"><span class="spark"></span> Перелистування (міні-слайди)</span>
+
+        <div class="slider" id="slider">
+          <div class="slider-top">
+            <div class="qmeta" id="slideMeta">Слайд ${state.slideIndex+1} / ${t.slides.length}</div>
+            <div class="navbtns">
+              <button class="btn mini" id="prevSlideBtn" type="button">←</button>
+              <button class="btn mini" id="nextSlideBtn" type="button">→</button>
+            </div>
+          </div>
+          ${t.slides.map((s, i)=>`
+            <div class="slide ${i===state.slideIndex ? "active":""}" id="slide${i}">
+              <h3>${escapeHtml(s.title)}</h3>
+              <p>${escapeHtml(s.text)}</p>
+            </div>
+          `).join("")}
+        </div>
+      `;
+
+      const quiz = `
+        <div class="divider"></div>
+        <span class="badge"><span class="spark"></span> Тест (10 запитань) • результат збережеться в профілі</span>
+
+        <div class="quiz" id="quiz">
+          <div class="quiz-h">
+            <div>
+              <div style="font-weight:900">Поточний тест: ${escapeHtml(t.tag)} • ${escapeHtml(shortName(t.name))}</div>
+              <div class="qmeta" id="qMeta">Натисни «Почати», щоб перейти до питань.</div>
+            </div>
+            <div class="progress" aria-label="Прогрес тесту"><div class="bar" id="bar"></div></div>
+          </div>
+          <div class="quiz-b" id="quizBody">
+            <p class="lead" style="margin:0 0 12px">
+              Після проходження ти побачиш бали та відсоток. Найкращий результат збережеться, а історія — до 10 спроб.
+            </p>
+            <div class="quiz-actions">
+              <button class="btn primary" id="quizGoBtn" type="button">Почати</button>
+              <button class="btn" id="quizResetBtn" type="button">Перезапустити</button>
+            </div>
+            <div class="result" id="resultBox"></div>
+          </div>
+        </div>
+      `;
+
+      els.contentArea.innerHTML = hero + acc + slider + quiz;
+
+      // Accordion behavior
+      const accRoot = document.getElementById("acc");
+      accRoot.querySelectorAll(".acc-btn").forEach(btn=>{
+        btn.addEventListener("click", ()=>{
+          const i = Number(btn.dataset.acc);
+          toggleAccordion(i);
+        });
+      });
+
+      // Slider buttons
+      document.getElementById("prevSlideBtn").addEventListener("click", ()=>shiftSlide(-1));
+      document.getElementById("nextSlideBtn").addEventListener("click", ()=>shiftSlide(+1));
+      updateSlideMeta();
+
+      // Quiz buttons
+      document.getElementById("quizGoBtn").addEventListener("click", ()=>startQuiz());
+      document.getElementById("quizResetBtn").addEventListener("click", ()=>resetQuizUI());
+
+      // Start quiz from header
+      els.startQuizBtn.onclick = ()=> startQuiz(true);
+    }
+
+    function toggleAccordion(i){
+      const panel = document.getElementById("accPanel"+i);
+      if(!panel) return;
+      const isOpen = panel.style.maxHeight && panel.style.maxHeight !== "0px";
+      if(isOpen){
+        panel.style.maxHeight = "0px";
+      }else{
+        panel.style.maxHeight = panel.scrollHeight + "px";
+      }
+    }
+
+    function shiftSlide(dir){
+      const t = currentTopic();
+      if(!t) return;
+      const n = t.slides.length;
+      state.slideIndex = (state.slideIndex + dir + n) % n;
+      for(let i=0;i<n;i++){
+        const el = document.getElementById("slide"+i);
+        if(el) el.classList.toggle("active", i===state.slideIndex);
+      }
+      updateSlideMeta();
+    }
+
+    function updateSlideMeta(){
+      const t = currentTopic();
+      if(!t) return;
+      const meta = document.getElementById("slideMeta");
+      if(meta) meta.textContent = `Слайд ${state.slideIndex+1} / ${t.slides.length}`;
+    }
+
+    /* ==========================
+       Quiz engine
+       ========================== */
+    function startQuiz(scrollToQuiz=false){
+      const t = currentTopic();
+      if(!t) return;
+      state.quiz.active = true;
+      state.quiz.idx = 0;
+      state.quiz.selected = null;
+      state.quiz.correctCount = 0;
+      state.quiz.finished = false;
+      renderQuestion();
+
+      if(scrollToQuiz){
+        document.getElementById("quiz")?.scrollIntoView({behavior:"smooth", block:"start"});
+      }
+    }
+
+    function resetQuizUI(){
+      const t = currentTopic();
+      if(!t) return;
+      state.quiz = {active:false, idx:0, selected:null, correctCount:0, finished:false};
+      const body = document.getElementById("quizBody");
+      const meta = document.getElementById("qMeta");
+      const bar = document.getElementById("bar");
+      const resultBox = document.getElementById("resultBox");
+      if(meta) meta.textContent = "Натисни «Почати», щоб перейти до питань.";
+      if(bar) bar.style.width = "0%";
+      if(resultBox){ resultBox.classList.remove("show"); resultBox.innerHTML=""; }
+      if(body){
+        body.innerHTML = `
+          <p class="lead" style="margin:0 0 12px">
+            Після проходження ти побачиш бали та відсоток. Найкращий результат збережеться, а історія — до 10 спроб.
+          </p>
+          <div class="quiz-actions">
+            <button class="btn primary" id="quizGoBtn" type="button">Почати</button>
+            <button class="btn" id="quizResetBtn" type="button">Перезапустити</button>
+          </div>
+          <div class="result" id="resultBox"></div>
+        `;
+        document.getElementById("quizGoBtn").addEventListener("click", ()=>startQuiz());
+        document.getElementById("quizResetBtn").addEventListener("click", ()=>resetQuizUI());
+      }
+    }
+
+    function renderQuestion(){
+      const t = currentTopic();
+      if(!t) return;
+
+      const q = t.quiz[state.quiz.idx];
+      const meta = document.getElementById("qMeta");
+      const bar = document.getElementById("bar");
+      const body = document.getElementById("quizBody");
+
+      const progress = Math.round((state.quiz.idx / t.quiz.length) * 100);
+      if(bar) bar.style.width = progress + "%";
+      if(meta) meta.textContent = `Питання ${state.quiz.idx+1} з ${t.quiz.length}`;
+
+      if(!body) return;
+
+      body.innerHTML = `
+        <p class="qtext">${escapeHtml(q.q)}</p>
+        <div class="opts" id="opts">
+          ${q.a.map((opt, i)=>`
+            <div class="opt" role="button" tabindex="0" data-i="${i}">
+              ${escapeHtml(opt)}
+            </div>
+          `).join("")}
+        </div>
+
+        <div class="quiz-actions">
+          <button class="btn primary" id="confirmBtn" type="button">Підтвердити відповідь</button>
+          <button class="btn" id="skipBtn" type="button" title="Не рахується як правильна">Пропустити</button>
+          <span class="kbd" id="helpKbd">Enter → наступне</span>
+        </div>
+
+        <div class="result" id="resultBox"></div>
+      `;
+
+      state.quiz.selected = null;
+
+      const opts = body.querySelectorAll(".opt");
+      opts.forEach(el=>{
+        el.addEventListener("click", ()=>selectOption(el));
+        el.addEventListener("keydown", (e)=>{
+          if(e.key==="Enter" || e.key===" "){ e.preventDefault(); selectOption(el); }
+        });
+      });
+
+      document.getElementById("confirmBtn").addEventListener("click", ()=>confirmAnswer());
+      document.getElementById("skipBtn").addEventListener("click", ()=>skipAnswer());
+    }
+
+    function selectOption(el){
+      const body = document.getElementById("quizBody");
+      body.querySelectorAll(".opt").forEach(o=>o.classList.remove("selected"));
+      el.classList.add("selected");
+      state.quiz.selected = Number(el.dataset.i);
+    }
+
+    function confirmAnswer(){
+      const t = currentTopic(); if(!t) return;
+      const q = t.quiz[state.quiz.idx];
+      const body = document.getElementById("quizBody");
+      const resultBox = document.getElementById("resultBox");
+
+      if(state.quiz.selected===null){
+        showResult("Оберіть варіант відповіді перед підтвердженням.", "warn");
+        return;
+      }
+
+      // Lock options and show correct/wrong
+      const opts = body.querySelectorAll(".opt");
+      opts.forEach(o=>{
+        const i = Number(o.dataset.i);
+        o.classList.remove("selected");
+        o.classList.toggle("correct", i===q.c);
+        o.classList.toggle("wrong", i===state.quiz.selected && i!==q.c);
+        o.style.pointerEvents = "none";
+        o.setAttribute("tabindex","-1");
+      });
+
+      const isCorrect = (state.quiz.selected === q.c);
+      if(isCorrect) state.quiz.correctCount++;
+
+      showResult(
+        `${isCorrect ? "✅ Правильно." : "❌ Неправильно."} Пояснення: ${escapeHtml(q.e)}`,
+        isCorrect ? "ok" : "bad"
+      );
+
+      // Next step button
+      const actions = body.querySelector(".quiz-actions");
+      actions.innerHTML = `
+        <button class="btn primary" id="nextBtn" type="button">${state.quiz.idx === t.quiz.length-1 ? "Завершити тест" : "Далі"}</button>
+        <button class="btn" id="restartBtn" type="button">Почати заново</button>
+        <span class="kbd">←/→ для слайдів вище</span>
+      `;
+      document.getElementById("nextBtn").addEventListener("click", ()=>nextQuestion());
+      document.getElementById("restartBtn").addEventListener("click", ()=>startQuiz(true));
+    }
+
+    function skipAnswer(){
+      showResult("Питання пропущено. Правильна відповідь буде показана після підтвердження наступного питання.", "warn");
+      nextQuestion();
+    }
+
+    function nextQuestion(){
+      const t = currentTopic(); if(!t) return;
+      if(state.quiz.idx < t.quiz.length-1){
+        state.quiz.idx++;
+        renderQuestion();
+        updateProgressBar();
+      }else{
+        finishQuiz();
+      }
+    }
+
+    function updateProgressBar(){
+      const t = currentTopic(); if(!t) return;
+      const bar = document.getElementById("bar");
+      const progress = Math.round((state.quiz.idx / t.quiz.length) * 100);
+      if(bar) bar.style.width = progress + "%";
+    }
+
+    function finishQuiz(){
+      const t = currentTopic(); if(!t) return;
+
+      state.quiz.finished = true;
+
+      const total = t.quiz.length;
+      const score = state.quiz.correctCount;
+      const percent = Math.round((score / total) * 100);
+
+      // Save to profile
+      const profile = loadProfile();
+      const best = profile.results[t.id]?.bestScore ?? -1;
+      const bestPercent = profile.results[t.id]?.bestPercent ?? -1;
+
+      const improved = (score > best) || (score===best && percent > bestPercent);
+
+      profile.results[t.id] = {
+        topicName: t.name,
+        bestScore: improved ? score : best,
+        bestPercent: improved ? percent : bestPercent,
+        lastScore: score,
+        lastPercent: percent,
+        lastAt: nowStamp(),
+        attempts: (profile.results[t.id]?.attempts ?? 0) + 1
+      };
+
+      profile.history.unshift({
+        at: nowStamp(),
+        topicId: t.id,
+        topicName: t.name,
+        score,
+        total,
+        percent
+      });
+      profile.history = profile.history.slice(0, 10);
+
+      saveProfile(profile);
+      updateHello();
+      renderProfile();
+
+      // UI
+      const bar = document.getElementById("bar");
+      if(bar) bar.style.width = "100%";
+
+      const body = document.getElementById("quizBody");
+      const meta = document.getElementById("qMeta");
+      if(meta) meta.textContent = "Тест завершено.";
+
+      if(body){
+        body.innerHTML = `
+          <div class="result show" id="resultBox"></div>
+          <div class="quiz-actions" style="margin-top:12px">
+            <button class="btn primary" id="againBtn" type="button">Пройти ще раз</button>
+            <button class="btn" id="openProfBtn2" type="button">Відкрити профіль</button>
+          </div>
+          <p class="hint">
+            Найкращий результат по темі: <b>${profile.results[t.id].bestScore}</b> / ${total} (${profile.results[t.id].bestPercent}%).
+          </p>
+        `;
+
+        const msg =
+          `🎯 Результат: <b>${score}</b> / ${total} • <b>${percent}%</b>` +
+          (improved ? "<br>✨ Новий найкращий результат збережено в профілі." : "<br>Збережено як останню спробу (найкращий результат не змінився).");
+
+        const rb = document.getElementById("resultBox");
+        rb.innerHTML = msg;
+
+        document.getElementById("againBtn").addEventListener("click", ()=>startQuiz(true));
+        document.getElementById("openProfBtn2").addEventListener("click", ()=>openProfile());
+      }
+    }
+
+    function showResult(text, kind){
+      const box = document.getElementById("resultBox");
+      if(!box) return;
+      box.classList.add("show");
+      const color = (kind==="ok") ? "rgba(57,255,182,.12)" : (kind==="bad") ? "rgba(255,77,109,.12)" : "rgba(255,208,0,.12)";
+      const border = (kind==="ok") ? "rgba(57,255,182,.55)" : (kind==="bad") ? "rgba(255,77,109,.55)" : "rgba(255,208,0,.55)";
+      box.style.background = color;
+      box.style.borderColor = border;
+      box.innerHTML = escapeHtml(text);
+    }
+
+    /* ==========================
+       Profile modal
+       ========================== */
+    function openProfile(){
+      els.profileModal.classList.add("show");
+      const p = loadProfile();
+      els.nameInput.value = p.name || "";
+      renderProfile();
+      els.nameInput.focus();
+    }
+    function closeProfile(){
+      els.profileModal.classList.remove("show");
+    }
+
+    function renderProfile(){
+      const p = loadProfile();
+
+      // Stats
+      const totalAttempts = Object.values(p.results||{}).reduce((s, r)=> s + (r.attempts||0), 0);
+      const bestAvg = (() => {
+        const arr = Object.values(p.results||{}).map(r=> r.bestPercent).filter(x=>typeof x==="number" && x>=0);
+        if(!arr.length) return 0;
+        const sum = arr.reduce((a,b)=>a+b,0);
+        return Math.round(sum / arr.length);
+      })();
+
+      const completedTopics = Object.keys(p.results||{}).length;
+
+      els.profileStats.innerHTML = `
+        <div class="stat"><b>Ім’я</b><div class="v">${escapeHtml(p.name || "—")}</div></div>
+        <div class="stat"><b>Пройдено тем</b><div class="v">${completedTopics}</div></div>
+        <div class="stat"><b>Спроб загалом</b><div class="v">${totalAttempts}</div></div>
+        <div class="stat"><b>Середній найкращий %</b><div class="v">${bestAvg}%</div></div>
+      `;
+
+      // History
+      const tbody = els.historyTable.querySelector("tbody");
+      tbody.innerHTML = "";
+      (p.history||[]).forEach(h=>{
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td>${escapeHtml(h.at)}</td>
+          <td>${escapeHtml(shortName(h.topicName))}</td>
+          <td class="right"><b>${h.score}</b> / ${h.total}</td>
+          <td class="right"><b>${h.percent}%</b></td>
+        `;
+        tbody.appendChild(tr);
+      });
+
+      if(!(p.history||[]).length){
+        const tr = document.createElement("tr");
+        tr.innerHTML = `
+          <td colspan="4" style="text-align:center; border-radius:14px; color:rgba(255,255,255,.75)">
+            Історії поки немає — пройди будь-який тест 😊
+          </td>
+        `;
+        tbody.appendChild(tr);
+      }
+    }
+
+    function updateHello(){
+      const p = loadProfile();
+      els.helloText.textContent = p.name ? `Профіль: ${p.name}` : "Профіль: не налаштовано";
+    }
+
+    /* ==========================
+       Filters
+       ========================== */
+    function setFilter(f){
+      state.filter = f;
+      [els.filterAll, els.filterCell, els.filterMicro, els.filterBot].forEach(x=>x.classList.remove("active"));
+      if(f==="all") els.filterAll.classList.add("active");
+      if(f==="cell") els.filterCell.classList.add("active");
+      if(f==="micro") els.filterMicro.classList.add("active");
+      if(f==="bot") els.filterBot.classList.add("active");
+
+      // Keep current topic if still visible; otherwise pick first
+      const list = filteredTopics();
+      if(!list.some(t=>t.id===state.topicId)){
+        state.topicId = list[0]?.id ?? null;
+      }
+      renderTopics();
+      renderContent();
+    }
+
+    els.filterAll.addEventListener("click", ()=>setFilter("all"));
+    els.filterCell.addEventListener("click", ()=>setFilter("cell"));
+    els.filterMicro.addEventListener("click", ()=>setFilter("micro"));
+    els.filterBot.addEventListener("click", ()=>setFilter("bot"));
+
+    /* ==========================
+       Keyboard UX
+       ========================== */
+    document.addEventListener("keydown", (e)=>{
+      // close modal by Escape
+      if(e.key==="Escape" && els.profileModal.classList.contains("show")){
+        closeProfile();
+      }
+
+      // slider arrows
+      if(e.key==="ArrowLeft"){ shiftSlide(-1); }
+      if(e.key==="ArrowRight"){ shiftSlide(+1); }
+
+      // quiz: Enter moves next when answer already confirmed or just confirm
+      if(e.key==="Enter"){
+        const confirm = document.getElementById("confirmBtn");
+        const next = document.getElementById("nextBtn");
+        if(next){ next.click(); }
+        else if(confirm){ confirm.click(); }
+      }
+    });
+
+    /* ==========================
+       Bind header/profile buttons
+       ========================== */
+    els.openProfileBtn.addEventListener("click", openProfile);
+    els.closeProfileBtn.addEventListener("click", closeProfile);
+    els.profileModal.addEventListener("click", (e)=>{
+      if(e.target === els.profileModal) closeProfile();
+    });
+    els.saveNameBtn.addEventListener("click", ()=>{
+      const p = loadProfile();
+      p.name = (els.nameInput.value || "").trim();
+      saveProfile(p);
+      updateHello();
+      renderProfile();
+    });
+    els.resetBtn.addEventListener("click", ()=>{
+      localStorage.removeItem(STORAGE_KEY);
+      updateHello();
+      renderProfile();
+      els.nameInput.value = "";
+    });
+
+    /* ==========================
+       Utils
+       ========================== */
+    function escapeHtml(s){
+      return String(s)
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
+    }
+    function shortName(s){
+      // shorter display for tables
+      const max = 44;
+      const str = String(s);
+      return str.length > max ? str.slice(0, max-1) + "…" : str;
+    }
+
+    /* ==========================
+       Init
+       ========================== */
+    updateHello();
+    renderTopics();
+    renderContent();
+  </script>
+</body>
+</html>
